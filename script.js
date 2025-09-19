@@ -9,12 +9,12 @@ const modal = document.getElementById('gifModal');           // Modal element fo
 const modalGif = document.getElementById('modalGif');        // <img> inside modal that shows the selected GIF
 
 // ===== APP STATE =====
-const apiKey = 'eaPfVQoheFdqg0tFezSqAEpAsVjzgdP6';          // Giphy API key
+const apiKey = 'eaPfVQoheFdqg0tFezSqAEpAsVjzgdP6';          // Giphy API key (Replace it with yours)
 let selectedGifUrl = '';                                     // Currently selected GIF URL (for copy/download)
 let selectedGifTitle = '';                                   // Currently selected GIF title (for download filename)
 let currentGif = null;                                       // Entire GIF object of the item opened in modal
 
-// ===== CORE: FETCH & RENDER GIFS =====
+// ===== CORE: aFETCH & RENDER GIFS =====
 async function fetchGIFs(query) {
   // Update page title + show loading skeleton
   currentTitle.textContent = `results for "${query}"`;
