@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-950 text-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A fun GIF web app powered by the Giphy API.">
+  <title>GIF App | Made by @mvntahax</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="bg-gray-900 shadow-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 p-4">
+      <!-- Left: Brand + mobile toggles -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button id="sidebarToggle" class="md:hidden inline-flex items-center justify-center rounded-lg border border-gray-700 px-2 py-1 text-gray-300 hover:bg-gray-800" aria-label="Toggle tags panel">
+          <i class="bi bi-sliders"></i>
+        </button>
+        <h1 class="text-2xl sm:text-3xl font-bold text-purple-400 flex items-center gap-2">
+          <i class="bi bi-filetype-gif text-purple-300 text-xl sm:text-2xl"></i> GIF App
+        </h1>
+      </div>
+
+      <!-- CSearch -->
+      <div class="w-full max-w-none md:max-w-xs md:absolute md:left-1/2 md:-translate-x-1/2">
+        <form id="searchFormWrapper" class="w-full">
+          <div class="flex items-center bg-gray-800 border border-gray-700 rounded-full overflow-hidden px-3 py-2 focus-within:ring-1 focus-within:ring-purple-400 transition">
+            <i class="bi bi-search text-gray-400 mr-2"></i>
+            <input id="searchInput" type="text" placeholder="search GIFs" class="bg-transparent text-white placeholder-gray-400 w-full outline-none" autocomplete="off" />
+          </div>
+        </form>
+      </div>
+
+      <!-- Right: Nav / mobile menu toggle -->
+      <nav class="hidden md:flex gap-4 text-sm md:text-base">
+        <a href="#trending" data-query="trending" class="hover:text-purple-400 transition duration-200 cursor-pointer">trending</a>
+        <a href="#entertainment" data-query="entertainment" class="hover:text-purple-400 transition duration-200 cursor-pointer">entertainment</a>
+        <a href="#favorites" data-query="favorites" class="hover:text-purple-400 transition duration-200 cursor-pointer">favorites</a>
+      </nav>
+      <button id="menuToggle" class="md:hidden inline-flex items-center justify-center rounded-lg border border-gray-700 px-2 py-1 text-gray-300 hover:bg-gray-800" aria-controls="mobileMenu" aria-expanded="false" aria-label="Toggle menu">
+        <i class="bi bi-list text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="md:hidden max-w-7xl mx-auto px-4 pb-3 hidden">
+      <div class="flex flex-wrap gap-4 text-base">
+        <a href="#trending" data-query="trending" class="hover:text-purple-400 transition cursor-pointer">trending</a>
+        <a href="#entertainment" data-query="entertainment" class="hover:text-purple-400 transition cursor-pointer">entertainment</a>
+        <a href="#favorites" data-query="favorites" class="hover:text-purple-400 transition cursor-pointer">favorites</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout -->
+  <main class="max-w-7xl mx-auto p-4 flex flex-col md:flex-row gap-6">
+    <!-- Sidebar (desktop) -->
+    <aside class="hidden md:flex flex-col md:w-1/4 border border-gray-800 rounded-xl p-6 md:h-[calc(100vh-8rem)] md:sticky md:top-24 shadow-md overflow-y-auto">
+      <div class="gap-4 border-b border-gray-700 pb-4 mb-4">
+        <input id="tagSearchInput" type="text" placeholder="search from tags" class="w-full px-4 py-2 mb-4 rounded-full bg-gray-800 border border-gray-700 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-purple-400 transition" autocomplete="off" />
+      </div>
+      <h3 class="text-lg font-semibold mb-4 text-purple-400">popular tags</h3>
+      <ul id="tagList" class="space-y-3 w-full text-left">
+        <li><a data-query="smile" class="text-purple-300 hover:text-purple-100 transition cursor-pointer">#smile</a></li>
+        <li><a data-query="happy" class="text-purple-300 hover:text-purple-100 transition cursor-pointer">#happy</a></li>
+        <li><a data-query="funny" class="text-purple-300 hover:text-purple-100 transition cursor-pointer">#funny</a></li>
+        <li><a data-query="cute" class="text-purple-300 hover:text-purple-100 transition cursor-pointer">#cute</a></li>
+        <li><a data-query="love" class="text-purple-300 hover:text-purple-100 transition cursor-pointer">#love</a></li>
+        <li><a data-query="animal" class="text-purple-300 hover:text-purple-100 transition cursor-pointer">#animal</a></li>
+      </ul>
+    </aside>
+
+    <!-- Mobile collapsible tags -->
+    <section id="mobileTags" class="md:hidden border border-gray-800 rounded-xl p-4 hidden">
+      <div class="gap-3 border-b border-gray-700 pb-3 mb-3">
+        <input type="text" placeholder="search from tags" class="w-full px-4 py-2 mb-3 rounded-full bg-gray-800 border border-gray-700 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-purple-400 transition" autocomplete="off" />
+      </div>
+      <h3 class="text-base font-semibold mb-3 text-purple-400">popular tags</h3>
+      <ul class="grid grid-cols-2 gap-2">
+        <li><a data-query="smile" class="block px-3 py-2 rounded-full bg-gray-800 border border-gray-700 text-purple-300 text-sm text-center">#smile</a></li>
+        <li><a data-query="happy" class="block px-3 py-2 rounded-full bg-gray-800 border border-gray-700 text-purple-300 text-sm text-center">#happy</a></li>
+        <li><a data-query="funny" class="block px-3 py-2 rounded-full bg-gray-800 border border-gray-700 text-purple-300 text-sm text-center">#funny</a></li>
+        <li><a data-query="cute" class="block px-3 py-2 rounded-full bg-gray-800 border border-gray-700 text-purple-300 text-sm text-center">#cute</a></li>
+        <li><a data-query="love" class="block px-3 py-2 rounded-full bg-gray-800 border border-gray-700 text-purple-300 text-sm text-center">#love</a></li>
+        <li><a data-query="animal" class="block px-3 py-2 rounded-full bg-gray-800 border border-gray-700 text-purple-300 text-sm text-center">#animal</a></li>
+      </ul>
+    </section>
+
+    <!-- Content -->
+    <section class="flex-1">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="currentTitle" class="text-lg sm:text-xl font-semibold mb-1 border-b border-gray-700 pb-2 flex-1"></h2>
+        <button class="md:hidden inline-flex items-center gap-2 rounded-full border border-gray-700 px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-800" onclick="toggleEl('mobileTags')">
+          <i class="bi bi-sliders"></i> tags
+        </button>
+      </div>
+      <div id="gifContainer" class="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 mt-4 sm:mt-6"></div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="gifModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+    <div class="bg-gray-900 text-white p-4 sm:p-6 rounded-2xl w-[96%] max-w-4xl relative shadow-lg">
+      <button onclick="closeModal()" class="absolute top-2 right-2 sm:top-3 sm:right-3 text-gray-400 hover:text-red-500 text-2xl sm:text-3xl focus:outline-none" aria-label="Close modal">&times;</button>
+      <div id="modalContent" class="flex flex-col md:flex-row gap-4 sm:gap-6 mt-2">
+        <div class="flex-1 flex flex-col">
+          <div class="bg-black rounded-lg overflow-hidden flex-1">
+            <img id="modalGif" src="" alt="GIF" class="w-full h-64 sm:h-80 object-contain md:object-cover bg-gray-800" />
+          </div>
+          <div class="flex flex-wrap gap-2 sm:gap-3 mt-4 justify-center">
+            <button onclick="copyGifLink()" class="bg-purple-600 hover:bg-purple-700 px-3 sm:px-4 py-2 rounded-full text-sm transition">
+              <i class="bi bi-link-45deg me-1"></i> copy link
+            </button>
+            <button onclick="downloadGif()" class="bg-blue-600 hover:bg-blue-700 px-3 sm:px-4 py-2 rounded-full text-sm transition">
+              <i class="bi bi-download me-1"></i> download
+            </button>
+            <button id="favButton" onclick="addToFavorites(currentGif)" class="favButton bg-yellow-600 hover:bg-yellow-700 px-3 sm:px-4 py-2 rounded-full text-sm transition">
+              <i class="bi bi-heart-fill me-1"></i> favorite
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 flex flex-col">
+          <h3 class="text-base sm:text-lg font-semibold mb-2 border-b border-gray-700 pb-1">similar GIFs</h3>
+          <div id="similarGifs" class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 overflow-y-auto pr-1 custom-scrollbar flex-grow max-h-56 sm:max-h-80"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toastNotification" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-purple-700 text-white px-3 sm:px-4 py-2 rounded-lg shadow-lg opacity-0 pointer-events-none flex items-center gap-2 sm:gap-3 max-w-xs transition-transform transition-opacity duration-300 z-[60] translate-x-full"></div>
+
+  <script src="script.js"></script>
+
+  <!-- Toggle Functionality -->
+  <script>
+    const toggleEl = (id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('hidden');
+    };
+
+    // Mobile main menu
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (menuToggle && mobileMenu) {
+      menuToggle.addEventListener('click', () => toggleEl('mobileMenu'));
+    }
+
+    // Mobile sidebar/tags block
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mobileTags = document.getElementById('mobileTags');
+    if (sidebarToggle && mobileTags) {
+      sidebarToggle.addEventListener('click', () => toggleEl('mobileTags'));
+    }
+
+    // Close mobile panels when resizing up to desktop
+    const mq = window.matchMedia('(min-width: 768px)');
+    const handleMQ = (e) => {
+      if (e.matches) {
+        mobileMenu && mobileMenu.classList.add('hidden');
+        mobileTags && mobileTags.classList.add('hidden');
+      }
+    };
+    mq.addEventListener ? mq.addEventListener('change', handleMQ) : mq.addListener(handleMQ);
+  </script>
+</body>
+</html>

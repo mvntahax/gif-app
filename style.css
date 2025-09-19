@@ -1,0 +1,31 @@
+/* Global reset & base styles */
+*{
+    font-family: 'Inter', 'sans-serif';
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    letter-spacing: -0.05em;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#toastNotification.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+#toastNotification {
+  transform: translateX(120%);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
